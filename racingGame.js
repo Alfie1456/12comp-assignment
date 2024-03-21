@@ -10,6 +10,7 @@ const screenHeight = 500;
 const obstacleHeight = 25;
 const obstacleWidth = 25;
 
+
 var screenSelector = "start";  
 var score = 0;
 var nextSpawn = 0;
@@ -18,7 +19,7 @@ var road,roadImage;
 var carOb1Img,carOb1;
 var truckOb1Img,truckOb1;
 var carOb1Group,truckOb1;
-
+var lifeTime = 1;
 function preload() {
     roadImage = loadImage('/Assets/images/road.png');
     playerImage = loadImage('/Assets/images/player.png');
@@ -76,25 +77,24 @@ function spawncarOb1(){
  var carOb1=createSprite(100,-100,30,30);
     carOb1.addImage(carOb1Img);
     carOb1.scale=0.3;
-    carOb1.velocityY=4;
-    carOb1.x=Math.round(random(40,300));
-     carOb1.lifetime=300;
-    carOb1Group.add(car1);
-   
+    carOb1.vel.y=4;
+    carOb1.x=Math.round(random(200,400));
+    carOb1.lifetime="lifeTime";
+
   
   }
 }
 
 
 function spawntruckOb1(){
-if(frameCount%600===0){
+if(frameCount> nextSpawn){
  var truckOb1=createSprite(100,-100,30,30);
     truckOb1.addImage(truckOb1Img);
     truckOb1.scale=0.4;
-    truckOb1.velocityY=5;
-    truckOb1.x=Math.round(random(50,500));
-     truckOb1.lifetime=300;
-    truckOb1Group.add(truck);
+    truckOb1.vel.x=1;
+    truckOb1.vel.y=5;
+    truckOb1.x=Math.round(random(400,500));
+     truckOb1.lifetime=1;
    }
   }
   
@@ -107,7 +107,7 @@ function newObstacle(){
     obstacles.add(obstacle);
 }
         //colision detecter
-function youDead(_player, _obstacle){
+function youDead(_player, _truckOb1, _carOb1){
     screenSelector = "end";
     player.remove();
     obstacles.removeAll();
@@ -129,9 +129,13 @@ function startScreen(){
         //game screen
 function gameScreen(){
     background(roadImage);
+    
     allSprites.visible = true;
     score++;
     player.speed = 3;
+    
+    spawncarOb1();
+    spawntruckOb1();
 	
 	if (kb.pressing('up')) {
 		player.direction = -90;
@@ -148,8 +152,10 @@ function gameScreen(){
     newObstacle();
     nextSpawn = frameCount + random(10,100,);
     
-  spawncarOb1();
-  spawntruckOb1();
+    
+  
+    spawncarOb1();
+    spawntruckOb1();
 }
     textSize(32);
     fill(255);
@@ -178,7 +184,7 @@ function resetGame(){
        player=new Sprite(100,100,100,100);
     player.addImage(playerImage);
     player.scale=0.5;
-    player.collides(obstacles, youDead);
+    player.collides(carOb1, truckOb1, youDead);
     score = 0;
 }
 
