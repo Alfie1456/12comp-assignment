@@ -17,15 +17,20 @@ var nextSpawn = 0;
 var player,playerImage;
 var road,roadImage;
 var carOb1Img,carOb1;
+var bikeOb1Img,bikeOb1;
 var truckOb1Img,truckOb1;
 var carOb1Group,truckOb1;
+var bikeOb1Group,truckOb1;
+var bikeOb1Group,carOb1;
+
 var lifeTime = 1;
 function preload() {
     roadImage = loadImage('/Assets/images/road.png');
     playerImage = loadImage('/Assets/images/player.png');
     carOb1Img = loadImage('/Assets/images/carObstacle1.png');
     truckOb1Img = loadImage('/Assets/images/truckObstacle1.png');
-    
+    bikeOb1Img = loadImage('/Assets/images/bikeObstacle1.png');
+
 }
 
 /*******************************************************/
@@ -40,7 +45,7 @@ function setup() {
         //screen selecter 
     document.addEventListener("keydown", 
         function(event) {
-            if(screenSelector == "start"||screenSelector == "end"){
+            if(screenSelector == "start"||screenSelector == "end" ||screenSelector == "instructions"){
                 screenSelector = "game"
                 resetGame();
             
@@ -48,10 +53,11 @@ function setup() {
             }
     });
     
-    
+ 
     
     carOb1Group= new Group();
     truckOb1Group= new Group();
+    bikeOb1Group= new Group();
 }
 
 /*******************************************************/
@@ -72,45 +78,46 @@ function draw() {
 }
 
 function spawncarOb1(){
-  
-  if(frameCount%250===0){
- var carOb1=createSprite(100,-100,30,30);
+    if(frameCount%250===0){
+    var carOb1=createSprite( 100,250,30,30);
     carOb1.addImage(carOb1Img);
-    carOb1.scale=0.3;
-    carOb1.vel.y=4;
-    carOb1.x=Math.round(random(200,400));
+    carOb1.scale=0.4;
+    carOb1.vel.x=-4;
+    carOb1.x=Math.round(random(450,500));
     carOb1.lifetime="lifeTime";
-
-  
-  }
+ }
 }
 
-
+        //Truck spawner
 function spawntruckOb1(){
-if(frameCount> nextSpawn){
- var truckOb1=createSprite(100,-100,30,30);
+    if(frameCount%350===0){
+    var truckOb1=createSprite(100,100,30,30);
     truckOb1.addImage(truckOb1Img);
     truckOb1.scale=0.4;
-    truckOb1.vel.x=1;
-    truckOb1.vel.y=5;
+    truckOb1.vel.x=-5;
     truckOb1.x=Math.round(random(400,500));
-     truckOb1.lifetime=1;
-   }
-  }
-  
-        //obstacle creater
-function newObstacle(){
-    obstacle = new Sprite((screenWidth -100),  screenHeight - obstacleHeight/2, obstacleWidth, obstacleHeight, 'k');
-    obstacle.color = color("yellow");
-    obstacle.vel.x = -5;
-    
-    obstacles.add(obstacle);
+    truckOb1.lifetime="lifetime";
+ }
 }
+ 
+         //Truck spawner
+function spawnbikeOb1(){
+    if(frameCount%350===0){
+    var bikeOb1=createSprite(100,350,30,30);
+    bikeOb1.addImage(bikeOb1Img);
+    bikeOb1.scale=0.4;
+    bikeOb1.vel.x=-5;
+    bikeOb1.x=Math.round(random(400,500));
+    bikeOb1.lifetime="lifetime";
+ }
+} 
+       
+
         //colision detecter
-function youDead(_player, _truckOb1, _carOb1){
-    screenSelector = "end";
+function youDead(_player, _truckOb1Img) {
+    screenSelector ="end";
     player.remove();
-    obstacles.removeAll();
+    truckOb1.removeAll();
 }
 
         //Start screen
@@ -126,6 +133,7 @@ function startScreen(){
     textSize(24);
     text("Press any key to start", 50, 110);
 }
+        
         //game screen
 function gameScreen(){
     background(roadImage);
@@ -134,8 +142,7 @@ function gameScreen(){
     score++;
     player.speed = 3;
     
-    spawncarOb1();
-    spawntruckOb1();
+    
 	
 	if (kb.pressing('up')) {
 		player.direction = -90;
@@ -148,10 +155,8 @@ function gameScreen(){
 	} else {
 	  player.speed = 0;
 	}
-    if(frameCount> nextSpawn){
-    newObstacle();
-    nextSpawn = frameCount + random(10,100,);
-    
+	
+ 
     
   
     spawncarOb1();
@@ -162,7 +167,7 @@ function gameScreen(){
     stroke(0);
     strokeWeight(4);
     text(score, 50, 50);
-}
+
         //end screen
 function endScreen(){
     background("white");
@@ -183,8 +188,8 @@ function endScreen(){
 function resetGame(){
        player=new Sprite(100,100,100,100);
     player.addImage(playerImage);
-    player.scale=0.5;
-    player.collides(carOb1, truckOb1, youDead);
+    player.scale=0.4;
+    player.collides(truckOb1, youDead);
     score = 0;
 }
 
