@@ -18,7 +18,7 @@ var roadImage;
 var carOb1;
 var player;
 var truckOb1;
-var carOb1Group, truckOb1Group;
+var bikeOb1;
 var lifeTime = 10;
 
 function preload() {
@@ -27,11 +27,12 @@ function preload() {
     playerImage = loadImage('/Assets/images/player.png');
     carOb1Img = loadImage('/Assets/images/carObstacle1.png');
     truckOb1Img = loadImage('/Assets/images/truckObstacle1.png');
+    bikeOb1Img = loadImage('/Assets/images/bikeObstacle1.png');
 
     //truck spawner
     truckOb1 = createSprite(100, 100, 30, 30, 'd');
     truckOb1.addImage(truckOb1Img);
-    truckOb1.scale = 0.7;
+    truckOb1Img.resize(30,30);
     truckOb1.x = Math.round(random(350, 500));
     truckOb1.lifetime = "lifetime";
     
@@ -42,6 +43,13 @@ function preload() {
     carOb1.x = Math.round(random(400, 500));
     carOb1.lifetime = "lifeTime";
 
+    //bike spawner
+    bikeOb1 = createSprite(400, 400, 30, 30, 'd');
+    bikeOb1.addImage(bikeOb1Img);
+    bikeOb1.scale = 0.3;
+    bikeOb1.x = Math.round(random(350, 500));
+    bikeOb1.lifetime = "lifetime";
+    
     //player spawner 
     player = new Sprite(100, 100, 100, 100);
     player.addImage(playerImage);
@@ -68,7 +76,7 @@ function setup() {
             }
         });
 
-    //walls/borders
+    //borders
     wallLH = new Sprite(0, height / 2, 8, height, 'k');
     wallLH.color = 'black';
     wallTop = new Sprite(0, 0, windowWidth * 2, 8, 'k');
@@ -99,7 +107,14 @@ function draw() {
 
         screenSelector = "end"
         console.log("coliding")
+        
+    } else if (bikeOb1.colliding(player)) {
+        
+        screenSelector = "end"
+        console.log("coliding")
+        
     }
+    
     //colision with wall 
     if (truckOb1.colliding(wallLH)) {
         truckOb1.x = 700;
@@ -107,6 +122,10 @@ function draw() {
 
     if (carOb1.colliding(wallLH)) {
         carOb1.x = 800;
+    }
+    
+    if (bikeOb1.colliding(wallLH)) {
+        bikeOb1.x = 600;
     }
 
 
@@ -151,9 +170,11 @@ function gameScreen() {
         score++;
     }
 
-    player.speed = 3;
-    truckOb1.vel.x = -5;
-    carOb1.vel.x = -4;
+    player.speed = 4;
+    truckOb1.vel.x = -6;
+    carOb1.vel.x = -5;
+    bikeOb1.vel.x = -8;
+    
     if (kb.pressing('up')) {
         player.direction = -90;
     } else if (kb.pressing('down')) {
@@ -192,15 +213,20 @@ function endScreen() {
     truckOb1.vel.x = 0;
     carOb1.vel.y = 0;
     truckOb1.vel.y = 0;
+    bikeOb1.vel.y = 0;
     truckOb1.x = 500;
     carOb1.x = 600;
     player.x = 100;
+    bikeOb1.x = 700;
     truckOb1.rotationSpeed = 0;
     carOb1.rotationSpeed = 0;
+    bikeOb1.rotationSpeed = 0;
     player.rotationSpeed = 0;
     truckOb1.rotation = 0;
+    bikeOb1.rotation = 0;
     carOb1.rotation = 0;
     player.rotation = 0;
+    
 }
 
 //score reset 
